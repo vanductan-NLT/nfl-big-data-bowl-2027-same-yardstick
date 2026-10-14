@@ -33,7 +33,7 @@ SETUP = '''import glob, os, sys, shutil
 from pathlib import Path
 BASE = os.path.dirname(glob.glob("/kaggle/input/**/games.csv", recursive=True)[0]) + "/"
 ROOT = Path("/kaggle/working"); (ROOT / "src").mkdir(exist_ok=True); (ROOT / "data" / "processed").mkdir(parents=True, exist_ok=True)
-if not (ROOT / "data" / "raw").exists():
+if not os.path.lexists(ROOT / "data" / "raw"):
     os.symlink(BASE.rstrip("/"), ROOT / "data" / "raw")
 sys.path.insert(0, str(ROOT / "src")); os.chdir(ROOT)
 print("BASE", BASE)'''
@@ -64,7 +64,7 @@ def main() -> None:
     nb.metadata["kernelspec"] = {"name": "python3", "display_name": "Python 3", "language": "python"}
     nbf.write(nb, FINAL / "bdb27-same-yardstick.ipynb")
     (FINAL / "kernel-metadata.json").write_text(
-        '{\n  "id": "vanductan/bdb27-same-yardstick-combine-vs-snap",\n  "title": "Same Yardstick: Combine vs snap trench movement",\n'
+        '{\n  "id": "vanductan/bdb27-same-yardstick-combine-vs-snap",\n  "title": "BDB27 same yardstick combine vs snap",\n'
         '  "code_file": "bdb27-same-yardstick.ipynb",\n  "language": "python",\n  "kernel_type": "notebook",\n  "is_private": false,\n'
         '  "enable_gpu": false,\n  "enable_tpu": false,\n  "enable_internet": false,\n  "dataset_sources": [],\n'
         '  "competition_sources": ["nfl-big-data-bowl-2027"],\n  "kernel_sources": [],\n  "model_sources": []\n}\n', encoding="utf-8")

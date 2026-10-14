@@ -80,7 +80,6 @@ for yr in (2023, 2024, 2025):
         .select(key + ["t", "x", "y", "s", "a", "o", "dir", "event"])
         .collect()
     )
-    n_plays_all = lf.select("game_id", "play_id").unique().collect().height
     n_plays_snap = df.select("game_id", "play_id").unique().height
     df = df.join(pp_axis, on=key, how="inner").sort(key + ["t"])
     df = add_depth_lateral(df, key)
@@ -93,7 +92,7 @@ for yr in (2023, 2024, 2025):
     )
     feats = feats.join(first_dir, on=key, how="left")
     parts.append(feats)
-    diag.append({"season": yr, "plays_tracked": n_plays_all, "plays_with_snap": n_plays_snap,
+    diag.append({"season": yr, "plays_with_snap": n_plays_snap,
                  "player_plays": feats.height, "sec": round(_time.time() - t1, 1)})
     print(diag[-1], flush=True)
 

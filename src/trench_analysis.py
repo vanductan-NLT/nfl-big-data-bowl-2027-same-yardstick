@@ -24,7 +24,8 @@ def load_game_features(path) -> pd.DataFrame:
     g = g[(g.play_nullified_by_penalty != "Y") & (g.quarter <= 4)]
     # sanity: player should be still before the snap; drop mis-tagged snaps
     g = g[(g.pre_s.isna()) | (g.pre_s < 1.5)]
-    g = g[g.depth_10.notna()]
+    g = g[g.depth_10.notna() & (g.t_max >= 1.5)]  # full 1.5 s window recorded
+    g["nfl_position"] = g.nfl_position.replace({"NT": "DT"})  # NT n=3: pool with interior
     g["pressure_allowed"] = g.pressure_allowed.map({True: 1.0, False: 0.0, "True": 1.0, "False": 0.0})
     g["pressured"] = g.time_to_pressure.notna().astype("float64")  # DL generated pressure
     g["quick_pressure"] = g.quick_pressure.fillna(0.0)
@@ -84,6 +85,14 @@ def residualize(df: pd.DataFrame, cols: list[str], controls: list[str]) -> pd.Da
     return out
 
 
+def _partial_r(x: np.ndarray, y: np.ndarray, X: np.ndarray) -> float:
+    """Pearson r between the residuals of x and y on the design matrix X."""
+    bx, *_ = np.linalg.lstsq(X, x, rcond=None); by, *_ = np.linalg.lstsq(X, y, rcond=None)
+    rx, ry = x - X @ bx, y - X @ by
+    den = np.sqrt((rx ** 2).sum() * (ry ** 2).sum())
+    return float((rx * ry).sum() / den) if den > 0 else np.nan
+
+
 def corr_table(df: pd.DataFrame, xs: list[str], ys: list[str], controls: list[str] | None = None,
                n_boot: int = 2000, seed: int = 0) -> pd.DataFrame:
     """Pearson r for every x-y pair, bootstrap 95% CI over rows, optional
@@ -98,14 +107,13 @@ def corr_table(df: pd.DataFrame, xs: list[str], ys: list[str], controls: list[st
             n = len(d)
             if n < 8:
                 rows.append({"x": x, "y": y, "n": n, "r": np.nan, "lo": np.nan, "hi": np.nan}); continue
-            if ctrl:
-                d = residualize(d, [x, y], ctrl)
-            xv, yv = d[x].values, d[y].values
-            r = np.corrcoef(xv, yv)[0, 1]
-            idx = rng.integers(0, n, size=(n_boot, n))
-            bx, by = xv[idx], yv[idx]
-            bx = bx - bx.mean(1, keepdims=True); by = by - by.mean(1, keepdims=True)
-            br = (bx * by).sum(1) / np.sqrt((bx ** 2).sum(1) * (by ** 2).sum(1))
+            xv, yv = d[x].astype(float).values, d[y].astype(float).values
+            X = np.column_stack([np.ones(n)] + [d[c].astype(float).values for c in ctrl])
+            r = _partial_r(xv, yv, X)
+            br = np.empty(n_boot)
+            for b in range(n_boot):  # re-fit the control regression inside every resample
+                idx = rng.integers(0, n, size=n)
+                br[b] = _partial_r(xv[idx], yv[idx], X[idx])
             lo, hi = np.nanpercentile(br, [2.5, 97.5])
             rows.append({"x": x, "y": y, "n": n, "r": r, "lo": lo, "hi": hi})
     return pd.DataFrame(rows)

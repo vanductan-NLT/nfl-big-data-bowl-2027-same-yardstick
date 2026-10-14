@@ -28,14 +28,21 @@ def _in(lo: float, hi: float) -> pl.Expr:
     return (pl.col("t") >= lo) & (pl.col("t") <= hi)
 
 
-def add_depth_lateral(frames: pl.DataFrame, key: list[str]) -> pl.DataFrame:
+def add_depth_lateral(frames: pl.DataFrame, key: list[str], ref: str = "t0") -> pl.DataFrame:
     """Add depth (along axis) and signed lateral (perp. to axis) relative to
-    the position at t==0 of each group."""
-    x0 = pl.col("x").filter(pl.col("t").abs() < TOL).first().over(key)
-    y0 = pl.col("y").filter(pl.col("t").abs() < TOL).first().over(key)
+    the reference position of each group: the frame at t==0 (in-game, the
+    snap) or the first recorded frame (Combine, ref="first"). If a
+    `depth_shift` column exists (Combine onset back-extrapolation) it is
+    added to depth."""
+    if ref == "first":
+        x0 = pl.col("x").sort_by("t").first().over(key); y0 = pl.col("y").sort_by("t").first().over(key)
+    else:
+        x0 = pl.col("x").filter(pl.col("t").abs() < TOL).first().over(key)
+        y0 = pl.col("y").filter(pl.col("t").abs() < TOL).first().over(key)
     dx, dy = pl.col("x") - x0, pl.col("y") - y0
+    shift = pl.col("depth_shift") if "depth_shift" in frames.columns else pl.lit(0.0)
     out = frames.with_columns(
-        (dx * pl.col("ux") + dy * pl.col("uy")).alias("depth"),
+        (dx * pl.col("ux") + dy * pl.col("uy") + shift).alias("depth"),
         (-dx * pl.col("uy") + dy * pl.col("ux")).alias("lat"),
     )
     if "o" in out.columns and "face" in out.columns:
@@ -78,7 +85,8 @@ def window_features(frames: pl.DataFrame, key: list[str]) -> pl.DataFrame:
         pl.col("lat_10").abs().alias("lat_abs_10"),
         pl.col("lat_15").abs().alias("lat_abs_15"),
         (pl.col("t_d2") - pl.col("t_d1")).alias("t_d1_d2"),
-        # side of the set: lat < 0 is the player's (offensive) left in both files
+        # side of the set: lat < 0 is the offensive left in both files (an OL's own
+        # left; a DL's own right)
         pl.when(pl.col("lat_10") < 0).then(pl.lit("L")).otherwise(pl.lit("R")).alias("side_10"),
     )
 

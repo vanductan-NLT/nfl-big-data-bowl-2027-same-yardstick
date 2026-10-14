@@ -48,8 +48,12 @@ def load_all():
     return g, att, players, base
 
 
-def combine_player(att, drill, cols):
+def combine_player(att, drill, cols, ids=None):
+    """Mean over attempts of year-centred (z within draft_year) metrics; `ids`
+    restricts the centring population (e.g. linemen only for the 40)."""
     d = att[att.drill_name == drill].copy()
+    if ids is not None:
+        d = d[d.nfl_id.isin(ids)]
     for c in cols:
         grp = d.groupby("draft_year")[c]
         d[c] = (d[c] - grp.transform("mean")) / grp.transform("std")
@@ -60,8 +64,9 @@ def player_table(g, att, base, side, drill, outs, min_plays=100):
     """One row per player: Combine drill z-metrics (c_), 40 z-metrics (f_), in-game means (g_) z within position."""
     gm = player_means(g[g.side == side], ["nfl_id"], GAME_METRICS + outs, min_plays)
     gm = gm.rename(columns={m: "g_" + m for m in GAME_METRICS + outs})
+    ids = base[base.nfl_position.isin(["T", "G", "C"] if side == "OL" else ["DT", "DE", "OLB", "NT"])].nfl_id
     c = combine_player(att, drill, MET).rename(columns={m: "c_" + m for m in MET})
-    f = combine_player(att, "FORTY_YARD_DASH", MET).rename(columns={m: "f_" + m for m in MET})
+    f = combine_player(att, "FORTY_YARD_DASH", MET, ids).rename(columns={m: "f_" + m for m in MET})
     d = base.merge(gm, on="nfl_id").merge(c, on="nfl_id", how="left").merge(f, on="nfl_id", how="left")
     return zscore_within(d, [x for x in d.columns if x.startswith("g_")], ["nfl_position"])
 
@@ -102,20 +107,23 @@ def fig2_reliability(g, att):
     for m in MET:
         a, b = p1.loc[cm, m].astype(float), p2.loc[cm, m].astype(float); yr = p1.loc[cm, "draft_year"]
         a = a - a.groupby(yr).transform("mean"); b = b - b.groupby(yr).transform("mean"); ok = a.notna() & b.notna()
-        c40.append({"metric": m, "n": int(ok.sum()), "r_sb": np.corrcoef(a[ok], b[ok])[0, 1]})
+        r1 = np.corrcoef(a[ok], b[ok])[0, 1]
+        # r_sb = reliability of the mean of the two attempts (the quantity used downstream)
+        c40.append({"metric": m, "n": int(ok.sum()), "r_single": r1, "r_sb": 2 * r1 / (1 + r1)})
     c40 = pd.DataFrame(c40)
     RES["reliability_game"] = rel.round(3).to_dict("records"); RES["reliability_40"] = c40.round(3).to_dict("records")
-    fig, ax = plt.subplots(figsize=(8.5, 4.6))
+    fig, ax = plt.subplots(figsize=(8.5, 5.6))
     ms = MET
     y = np.arange(len(ms))
     for off, (lab, df, col) in enumerate([("NFL snaps, OL (odd vs even weeks, n=%d)" % rel[rel.side == "OL"].n.max(), rel[rel.side == "OL"], C_OL),
                                           ("NFL snaps, DL (odd vs even weeks, n=%d)" % rel[rel.side == "DL"].n.max(), rel[rel.side == "DL"], C_DL),
-                                          ("Combine 40, linemen (attempt 1 vs 2, n=%d)" % c40.n.max(), c40.rename(columns={"r_sb": "r_sb"}), C_COMBINE)]):
+                                          ("Combine 40, linemen, mean of 2 attempts (SB from attempt 1 vs 2, n=%d)" % c40.n.max(), c40, C_COMBINE)]):
         vals = [df.set_index("metric").loc[m, "r_sb"] for m in ms]
         ax.barh(y + (off - 1) * 0.27, vals, height=0.25, color=col, label=lab)
-    ax.set_yticks(y); ax.set_yticklabels([LABELS[m] for m in ms]); ax.invert_yaxis(); ax.set_xlim(-0.1, 1.45)
-    ax.axvline(0.7, ls="--", color="grey", lw=1); ax.text(0.71, len(ms) - 0.6, "0.70", color="grey", fontsize=8)
-    ax.set_xlabel("reliability (correlation of two halves, Spearman-Brown for snaps)"); ax.legend(fontsize=8, loc="lower right"); ax.grid(axis="x", alpha=.3)
+    ax.set_yticks(y); ax.set_yticklabels([LABELS[m] for m in ms]); ax.invert_yaxis(); ax.set_xlim(-0.05, 1.05)
+    ax.axvline(0.7, ls="--", color="grey", lw=1); ax.text(0.71, -0.45, "0.70", color="grey", fontsize=8)
+    ax.set_xlabel("reliability of the quantity used (split-half with Spearman-Brown for snaps; two-attempt mean for the Combine 40)", fontsize=8.5)
+    ax.legend(fontsize=8, loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=1, frameon=False); ax.grid(axis="x", alpha=.3)
     ax.set_title("Figure 2. In-game trench movement is a stable signature; Combine starts repeat far less", fontsize=10)
     fig.tight_layout(); fig.savefig(OUT / "fig2_reliability.png", dpi=160); plt.close(fig)
 
@@ -178,11 +186,12 @@ def fig6_ol_within(g, base):
     pm = player_means(ol, ["nfl_id"], ["depth_10", "set_angle_10", "t_d1_d2"], 100).set_index("nfl_id")
     x = ol[ol.nfl_id.isin(pm.index) & ol.lined_up_position.isin(["T", "G", "C"])].copy()
     x = x.merge(base[["nfl_id", "pick", "combine_weight"]], on="nfl_id").dropna(subset=["peak_pressure_probability_allowed", "dropback_duration", "pass_rushers_encountered"])
+    x = x.dropna(subset=["t_d1_d2"])  # one model sample for both models
     for m in ["depth_10", "set_angle_10", "t_d1_d2"]:
-        x["P_" + m] = x.nfl_id.map(pm[m]); x["w_" + m] = x[m] - x["P_" + m]
+        x["P_" + m] = x.nfl_id.map(pm[m]); x["w_" + m] = x[m] - x.groupby("nfl_id")[m].transform("mean")  # true within-player deviation
     f_between = "peak_pressure_probability_allowed ~ C(lined_up_position) + dropback_duration + pass_rushers_encountered + pick + combine_weight + P_depth_10 + P_set_angle_10 + P_t_d1_d2"
-    mb = smf.ols(f_between, data=x.dropna(subset=["P_t_d1_d2"])).fit(cov_type="cluster", cov_kwds={"groups": x.dropna(subset=["P_t_d1_d2"]).nfl_id})
-    xx = x.dropna(subset=["w_t_d1_d2"])
+    mb = smf.ols(f_between, data=x).fit(cov_type="cluster", cov_kwds={"groups": x.nfl_id})
+    xx = x
     mw = smf.ols("peak_pressure_probability_allowed ~ w_depth_10 + w_set_angle_10 + w_t_d1_d2 + dropback_duration + pass_rushers_encountered", data=xx).fit(cov_type="cluster", cov_kwds={"groups": xx.nfl_id})
     RES["ol_between_model"] = {k: {"coef": round(mb.params[k], 4), "se": round(mb.bse[k], 4), "p": round(mb.pvalues[k], 4)} for k in ["P_depth_10", "P_set_angle_10", "P_t_d1_d2"]}
     RES["ol_within_model"] = {k: {"coef": round(mw.params[k], 4), "se": round(mw.bse[k], 4), "p": round(mw.pvalues[k], 4)} for k in ["w_depth_10", "w_set_angle_10", "w_t_d1_d2"]}
@@ -200,6 +209,28 @@ def fig6_ol_within(g, base):
     axes[1].set_title(f"Within a player: deeper-than-usual sets are the pressured ones\n(+{mw.params['w_depth_10']:.3f} per yd, n = {int(mw.nobs):,} snaps)", fontsize=9); axes[1].grid(alpha=.3)
     fig.suptitle("Figure 6. OL: set depth is a style, not a grade", fontsize=11)
     fig.tight_layout(); fig.savefig(OUT / "fig6_ol_within.png", dpi=160); plt.close(fig)
+
+
+def dl_play_level_models(g, base):
+    """DL: pressure on a pass-rush snap vs the player's mean get-off / second
+    yard, with alignment, blitz, down, distance, draft slot and weight."""
+    dl = g[g.side == "DL"].copy()
+    pm = player_means(dl, ["nfl_id"], ["t_d1_d2", "s_at_d1", "player_get_off"], 100).set_index("nfl_id")
+    x = dl[dl.nfl_id.isin(pm.index)].merge(base[["nfl_id", "pick", "combine_weight", "ten_yd_split"]], on="nfl_id").dropna(subset=["down", "yards_to_go"])
+    for m in ["t_d1_d2", "s_at_d1", "player_get_off"]:
+        x["P_" + m] = x.nfl_id.map(pm[m])
+    x["edge"] = x.lined_up_position.isin(["DE", "OLB"]).astype(float); x["down"] = x.down.astype(int)
+    x["blitz"] = x.blitzing.map({True: 1.0, False: 0.0, "True": 1.0, "False": 0.0}).fillna(0.0)
+    out = {}
+    for name, f in [("get_off", "pressured ~ edge + blitz + C(down) + yards_to_go + pick + combine_weight + P_player_get_off"),
+                    ("second_yard", "pressured ~ edge + blitz + C(down) + yards_to_go + pick + combine_weight + P_t_d1_d2"),
+                    ("both", "pressured ~ edge + blitz + C(down) + yards_to_go + pick + combine_weight + P_player_get_off + P_t_d1_d2"),
+                    ("official_10yd", "pressured ~ edge + blitz + C(down) + yards_to_go + pick + combine_weight + ten_yd_split")]:
+        xx = x.dropna(subset=["ten_yd_split"]) if "ten_yd_split" in f else x
+        m = smf.ols(f, data=xx).fit(cov_type="cluster", cov_kwds={"groups": xx.nfl_id})
+        out[name] = {"n": int(m.nobs), **{k: {"coef": round(m.params[k], 4), "se": round(m.bse[k], 4), "p": round(m.pvalues[k], 4)}
+                                        for k in m.params.index if k.startswith("P_") or k == "ten_yd_split"}}
+    RES["dl_play_level_models"] = out
 
 
 def fig7_weekly(g, base):
@@ -234,9 +265,12 @@ def main():
     for nm, d, ys in [("OL", dol, ["g_s_at_d1", "g_depth_10"]), ("DL", ddl, ["g_t_d1", "g_player_get_off", "g_pressured"])]:
         t = corr_table(d, ["forty", "ten_yd_split", "pick"], ys, controls=CTRL, n_boot=1000, seed=4)
         RES["official"][nm] = t.round(3).to_dict("records")
-    fig1_profiles(); fig2_reliability(g, att); fig3_transfer(dol, ddl); fig4_ol_scatter(dol); fig5_dl_outcome(ddl); fig6_ol_within(g, base); fig7_weekly(g, base)
+    RES["combine_onset"] = att[att.drill_name.isin(["PASS_RUSH_DROP", "PASS_RUSH_DRILL", "FORTY_YARD_DASH"])].groupby("drill_name").agg(
+        attempts=("event_id", "size"), frac_moving_first_frame=("first_recorded_speed", lambda v: float((v >= 0.5).mean())),
+        median_t_shift=("t_shift", "median")).round(3).to_dict("index")
+    fig1_profiles(); fig2_reliability(g, att); fig3_transfer(dol, ddl); fig4_ol_scatter(dol); fig5_dl_outcome(ddl); fig6_ol_within(g, base); dl_play_level_models(g, base); fig7_weekly(g, base)
     (OUT.parent / "results.json").write_text(json.dumps(RES, indent=1, default=float), encoding="utf-8")
-    print(json.dumps({k: RES[k] for k in ["n", "ol_scatter", "dl_outcome", "weekly", "ol_between_model", "ol_within_model"]}, indent=1, default=float))
+    print(json.dumps({k: RES[k] for k in ["n", "combine_onset", "ol_scatter", "dl_outcome", "weekly", "ol_between_model", "ol_within_model", "ol_model_n", "dl_play_level_models"]}, indent=1, default=float))
 
 
 if __name__ == "__main__":

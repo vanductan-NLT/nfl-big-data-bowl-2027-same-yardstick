@@ -1,6 +1,6 @@
 {
   "id": "vanductan/bdb27-same-yardstick-combine-vs-snap",
-  "title": "Same Yardstick: Combine vs snap trench movement",
+  "title": "BDB27 same yardstick combine vs snap",
   "code_file": "bdb27-same-yardstick.ipynb",
   "language": "python",
   "kernel_type": "notebook",

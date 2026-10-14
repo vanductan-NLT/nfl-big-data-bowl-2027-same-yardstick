@@ -3,7 +3,7 @@
   "ol_players": 66,
   "dl_players": 69,
   "ol_snaps": 48428,
-  "dl_snaps": 33108,
+  "dl_snaps": 33105,
   "combine_ol_attempts": 239,
   "combine_dl_attempts": 225
  },
@@ -14,39 +14,39 @@
     "y": "g_s_at_d1",
     "n": 53,
     "r": 0.005,
-    "lo": -0.292,
-    "hi": 0.298
+    "lo": -0.317,
+    "hi": 0.288
    },
    {
     "x": "forty",
     "y": "g_depth_10",
     "n": 53,
     "r": 0.021,
-    "lo": -0.272,
-    "hi": 0.294
+    "lo": -0.281,
+    "hi": 0.303
    },
    {
     "x": "ten_yd_split",
     "y": "g_s_at_d1",
     "n": 53,
     "r": -0.02,
-    "lo": -0.294,
-    "hi": 0.3
+    "lo": -0.32,
+    "hi": 0.294
    },
    {
     "x": "ten_yd_split",
     "y": "g_depth_10",
     "n": 53,
     "r": 0.188,
-    "lo": -0.069,
-    "hi": 0.474
+    "lo": -0.095,
+    "hi": 0.464
    },
    {
     "x": "pick",
     "y": "g_s_at_d1",
     "n": 66,
     "r": -0.153,
-    "lo": -0.385,
+    "lo": -0.386,
     "hi": 0.09
    },
    {
@@ -54,8 +54,8 @@
     "y": "g_depth_10",
     "n": 66,
     "r": -0.023,
-    "lo": -0.263,
-    "hi": 0.23
+    "lo": -0.28,
+    "hi": 0.225
    }
   ],
   "DL": [
@@ -64,74 +64,91 @@
     "y": "g_t_d1",
     "n": 54,
     "r": 0.045,
-    "lo": -0.205,
-    "hi": 0.29
+    "lo": -0.215,
+    "hi": 0.321
    },
    {
     "x": "forty",
     "y": "g_player_get_off",
     "n": 54,
     "r": 0.189,
-    "lo": -0.069,
-    "hi": 0.416
+    "lo": -0.077,
+    "hi": 0.435
    },
    {
     "x": "forty",
     "y": "g_pressured",
     "n": 54,
     "r": -0.217,
-    "lo": -0.437,
-    "hi": 0.022
+    "lo": -0.457,
+    "hi": 0.002
    },
    {
     "x": "ten_yd_split",
     "y": "g_t_d1",
     "n": 54,
     "r": 0.12,
-    "lo": -0.187,
-    "hi": 0.398
+    "lo": -0.196,
+    "hi": 0.414
    },
    {
     "x": "ten_yd_split",
     "y": "g_player_get_off",
     "n": 54,
     "r": 0.254,
-    "lo": -0.034,
-    "hi": 0.508
+    "lo": -0.066,
+    "hi": 0.509
    },
    {
     "x": "ten_yd_split",
     "y": "g_pressured",
     "n": 54,
     "r": -0.204,
-    "lo": -0.409,
-    "hi": 0.01
+    "lo": -0.423,
+    "hi": 0.033
    },
    {
     "x": "pick",
     "y": "g_t_d1",
     "n": 69,
     "r": 0.262,
-    "lo": 0.002,
-    "hi": 0.475
+    "lo": -0.002,
+    "hi": 0.478
    },
    {
     "x": "pick",
     "y": "g_player_get_off",
     "n": 69,
-    "r": 0.255,
-    "lo": 0.031,
-    "hi": 0.468
+    "r": 0.254,
+    "lo": 0.039,
+    "hi": 0.473
    },
    {
     "x": "pick",
     "y": "g_pressured",
     "n": 69,
     "r": -0.325,
-    "lo": -0.518,
-    "hi": -0.091
+    "lo": -0.523,
+    "hi": -0.085
    }
   ]
+ },
+ "combine_onset": {
+  "FORTY_YARD_DASH": {
+   "attempts": 792,
+   "frac_moving_first_frame": 0.861,
+   "median_t_shift": 0.187
+  },
+  "PASS_RUSH_DRILL": {
+   "attempts": 225,
+   "frac_moving_first_frame": 0.427,
+   "median_t_shift": 0.213
+  },
+  "PASS_RUSH_DROP": {
+   "attempts": 239,
+   "frac_moving_first_frame": 0.092,
+   "median_t_shift": 0.322
+  }
  },
  "reliability_game": [
   {
@@ -214,7 +231,7 @@
   {
    "metric": "s_10",
    "n": 65,
-   "r_half": 0.956,
+   "r_half": 0.957,
    "r_sb": 0.978,
    "side": "DL"
   },
@@ -250,13 +267,13 @@
    "metric": "set_angle_10",
    "n": 65,
    "r_half": 0.636,
-   "r_sb": 0.777,
+   "r_sb": 0.778,
    "side": "DL"
   },
   {
    "metric": "lat_abs_10",
    "n": 65,
-   "r_half": 0.648,
+   "r_half": 0.649,
    "r_sb": 0.787,
    "side": "DL"
   },
@@ -279,42 +296,50 @@
   {
    "metric": "depth_10",
    "n": 168,
-   "r_sb": 0.469
+   "r_single": 0.435,
+   "r_sb": 0.607
   },
   {
    "metric": "s_10",
    "n": 168,
-   "r_sb": 0.598
+   "r_single": 0.501,
+   "r_sb": 0.667
   },
   {
    "metric": "t_d1",
    "n": 168,
-   "r_sb": 0.314
+   "r_single": 0.392,
+   "r_sb": 0.563
   },
   {
    "metric": "s_at_d1",
    "n": 168,
-   "r_sb": 0.326
+   "r_single": 0.328,
+   "r_sb": 0.494
   },
   {
    "metric": "t_d1_d2",
    "n": 168,
-   "r_sb": 0.084
+   "r_single": 0.062,
+   "r_sb": 0.116
   },
   {
    "metric": "smax_15",
    "n": 168,
-   "r_sb": 0.721
+   "r_single": 0.59,
+   "r_sb": 0.742
   },
   {
    "metric": "set_angle_10",
    "n": 168,
-   "r_sb": 0.422
+   "r_single": 0.381,
+   "r_sb": 0.552
   },
   {
    "metric": "lat_abs_10",
    "n": 168,
-   "r_sb": 0.393
+   "r_single": 0.359,
+   "r_sb": 0.528
   }
  ],
  "transfer": [
@@ -322,9 +347,9 @@
    "x": "c_depth_10",
    "y": "g_depth_10",
    "n": 65,
-   "r": 0.214,
-   "lo": -0.01,
-   "hi": 0.433,
+   "r": 0.144,
+   "lo": -0.073,
+   "hi": 0.346,
    "metric": "depth_10",
    "panel": "OL kick-slide drill \u2192 OL snaps"
   },
@@ -332,9 +357,9 @@
    "x": "c_s_10",
    "y": "g_s_10",
    "n": 65,
-   "r": 0.206,
-   "lo": -0.06,
-   "hi": 0.42,
+   "r": 0.193,
+   "lo": -0.091,
+   "hi": 0.491,
    "metric": "s_10",
    "panel": "OL kick-slide drill \u2192 OL snaps"
   },
@@ -342,9 +367,9 @@
    "x": "c_t_d1",
    "y": "g_t_d1",
    "n": 65,
-   "r": 0.212,
-   "lo": -0.032,
-   "hi": 0.444,
+   "r": 0.154,
+   "lo": -0.082,
+   "hi": 0.381,
    "metric": "t_d1",
    "panel": "OL kick-slide drill \u2192 OL snaps"
   },
@@ -352,9 +377,9 @@
    "x": "c_s_at_d1",
    "y": "g_s_at_d1",
    "n": 65,
-   "r": 0.404,
-   "lo": 0.093,
-   "hi": 0.623,
+   "r": 0.438,
+   "lo": 0.124,
+   "hi": 0.647,
    "metric": "s_at_d1",
    "panel": "OL kick-slide drill \u2192 OL snaps"
   },
@@ -362,9 +387,9 @@
    "x": "c_t_d1_d2",
    "y": "g_t_d1_d2",
    "n": 65,
-   "r": 0.016,
-   "lo": -0.186,
-   "hi": 0.277,
+   "r": 0.067,
+   "lo": -0.141,
+   "hi": 0.355,
    "metric": "t_d1_d2",
    "panel": "OL kick-slide drill \u2192 OL snaps"
   },
@@ -372,9 +397,9 @@
    "x": "c_smax_15",
    "y": "g_smax_15",
    "n": 65,
-   "r": 0.114,
-   "lo": -0.184,
-   "hi": 0.377,
+   "r": 0.125,
+   "lo": -0.176,
+   "hi": 0.429,
    "metric": "smax_15",
    "panel": "OL kick-slide drill \u2192 OL snaps"
   },
@@ -382,9 +407,9 @@
    "x": "f_depth_10",
    "y": "g_depth_10",
    "n": 53,
-   "r": 0.101,
-   "lo": -0.099,
-   "hi": 0.329,
+   "r": 0.196,
+   "lo": -0.055,
+   "hi": 0.418,
    "metric": "depth_10",
    "panel": "OL 40-yd start \u2192 OL snaps"
   },
@@ -392,9 +417,9 @@
    "x": "f_s_10",
    "y": "g_s_10",
    "n": 53,
-   "r": -0.065,
-   "lo": -0.284,
-   "hi": 0.144,
+   "r": 0.126,
+   "lo": -0.118,
+   "hi": 0.359,
    "metric": "s_10",
    "panel": "OL 40-yd start \u2192 OL snaps"
   },
@@ -402,9 +427,9 @@
    "x": "f_t_d1",
    "y": "g_t_d1",
    "n": 53,
-   "r": 0.241,
-   "lo": 0.045,
-   "hi": 0.445,
+   "r": 0.189,
+   "lo": -0.062,
+   "hi": 0.417,
    "metric": "t_d1",
    "panel": "OL 40-yd start \u2192 OL snaps"
   },
@@ -412,9 +437,9 @@
    "x": "f_s_at_d1",
    "y": "g_s_at_d1",
    "n": 53,
-   "r": -0.273,
-   "lo": -0.499,
-   "hi": -0.017,
+   "r": -0.23,
+   "lo": -0.51,
+   "hi": 0.087,
    "metric": "s_at_d1",
    "panel": "OL 40-yd start \u2192 OL snaps"
   },
@@ -422,9 +447,9 @@
    "x": "f_t_d1_d2",
    "y": "g_t_d1_d2",
    "n": 53,
-   "r": -0.158,
-   "lo": -0.392,
-   "hi": 0.11,
+   "r": 0.031,
+   "lo": -0.272,
+   "hi": 0.27,
    "metric": "t_d1_d2",
    "panel": "OL 40-yd start \u2192 OL snaps"
   },
@@ -432,9 +457,9 @@
    "x": "f_smax_15",
    "y": "g_smax_15",
    "n": 53,
-   "r": 0.008,
-   "lo": -0.215,
-   "hi": 0.215,
+   "r": 0.15,
+   "lo": -0.088,
+   "hi": 0.371,
    "metric": "smax_15",
    "panel": "OL 40-yd start \u2192 OL snaps"
   },
@@ -442,9 +467,9 @@
    "x": "c_depth_10",
    "y": "g_depth_10",
    "n": 69,
-   "r": 0.075,
-   "lo": -0.163,
-   "hi": 0.322,
+   "r": 0.14,
+   "lo": -0.078,
+   "hi": 0.358,
    "metric": "depth_10",
    "panel": "DL pass-rush drill \u2192 DL snaps"
   },
@@ -452,9 +477,9 @@
    "x": "c_s_10",
    "y": "g_s_10",
    "n": 69,
-   "r": 0.036,
-   "lo": -0.2,
-   "hi": 0.324,
+   "r": 0.125,
+   "lo": -0.115,
+   "hi": 0.366,
    "metric": "s_10",
    "panel": "DL pass-rush drill \u2192 DL snaps"
   },
@@ -462,9 +487,9 @@
    "x": "c_t_d1",
    "y": "g_t_d1",
    "n": 69,
-   "r": 0.033,
-   "lo": -0.234,
-   "hi": 0.307,
+   "r": 0.085,
+   "lo": -0.158,
+   "hi": 0.319,
    "metric": "t_d1",
    "panel": "DL pass-rush drill \u2192 DL snaps"
   },
@@ -472,9 +497,9 @@
    "x": "c_s_at_d1",
    "y": "g_s_at_d1",
    "n": 69,
-   "r": 0.037,
-   "lo": -0.19,
-   "hi": 0.288,
+   "r": -0.023,
+   "lo": -0.24,
+   "hi": 0.255,
    "metric": "s_at_d1",
    "panel": "DL pass-rush drill \u2192 DL snaps"
   },
@@ -482,9 +507,9 @@
    "x": "c_t_d1_d2",
    "y": "g_t_d1_d2",
    "n": 69,
-   "r": 0.226,
-   "lo": 0.001,
-   "hi": 0.423,
+   "r": 0.024,
+   "lo": -0.156,
+   "hi": 0.247,
    "metric": "t_d1_d2",
    "panel": "DL pass-rush drill \u2192 DL snaps"
   },
@@ -492,9 +517,9 @@
    "x": "c_smax_15",
    "y": "g_smax_15",
    "n": 69,
-   "r": 0.073,
-   "lo": -0.179,
-   "hi": 0.347,
+   "r": 0.057,
+   "lo": -0.157,
+   "hi": 0.323,
    "metric": "smax_15",
    "panel": "DL pass-rush drill \u2192 DL snaps"
   },
@@ -502,9 +527,9 @@
    "x": "f_depth_10",
    "y": "g_depth_10",
    "n": 53,
-   "r": -0.012,
-   "lo": -0.302,
-   "hi": 0.287,
+   "r": 0.01,
+   "lo": -0.304,
+   "hi": 0.313,
    "metric": "depth_10",
    "panel": "DL 40-yd start \u2192 DL snaps"
   },
@@ -512,9 +537,9 @@
    "x": "f_s_10",
    "y": "g_s_10",
    "n": 53,
-   "r": 0.144,
-   "lo": -0.157,
-   "hi": 0.407,
+   "r": 0.14,
+   "lo": -0.152,
+   "hi": 0.399,
    "metric": "s_10",
    "panel": "DL 40-yd start \u2192 DL snaps"
   },
@@ -522,9 +547,9 @@
    "x": "f_t_d1",
    "y": "g_t_d1",
    "n": 53,
-   "r": -0.105,
-   "lo": -0.361,
-   "hi": 0.171,
+   "r": 0.022,
+   "lo": -0.28,
+   "hi": 0.322,
    "metric": "t_d1",
    "panel": "DL 40-yd start \u2192 DL snaps"
   },
@@ -532,9 +557,9 @@
    "x": "f_s_at_d1",
    "y": "g_s_at_d1",
    "n": 53,
-   "r": 0.31,
-   "lo": 0.056,
-   "hi": 0.545,
+   "r": 0.115,
+   "lo": -0.144,
+   "hi": 0.368,
    "metric": "s_at_d1",
    "panel": "DL 40-yd start \u2192 DL snaps"
   },
@@ -542,9 +567,9 @@
    "x": "f_t_d1_d2",
    "y": "g_t_d1_d2",
    "n": 53,
-   "r": 0.053,
-   "lo": -0.174,
-   "hi": 0.273,
+   "r": -0.126,
+   "lo": -0.405,
+   "hi": 0.145,
    "metric": "t_d1_d2",
    "panel": "DL 40-yd start \u2192 DL snaps"
   },
@@ -552,74 +577,113 @@
    "x": "f_smax_15",
    "y": "g_smax_15",
    "n": 53,
-   "r": 0.107,
-   "lo": -0.159,
-   "hi": 0.371,
+   "r": 0.073,
+   "lo": -0.184,
+   "hi": 0.313,
    "metric": "smax_15",
    "panel": "DL 40-yd start \u2192 DL snaps"
   }
  ],
  "ol_scatter": {
   "n": 65,
-  "r": 0.404,
-  "lo": 0.11,
-  "hi": 0.617
+  "r": 0.438,
+  "lo": 0.143,
+  "hi": 0.639
  },
  "dl_outcome": {
   "get_off": {
    "n": 69,
    "r": -0.443,
-   "lo": -0.594,
-   "hi": -0.257
+   "lo": -0.593,
+   "hi": -0.246
   },
   "t_d1_d2": {
    "n": 69,
    "r": -0.507,
    "lo": -0.647,
-   "hi": -0.345
+   "hi": -0.341
   },
   "s_at_d1": {
    "n": 69,
-   "r": 0.496,
-   "lo": 0.315,
-   "hi": 0.651
+   "r": 0.495,
+   "lo": 0.311,
+   "hi": 0.654
   }
  },
  "ol_between_model": {
   "P_depth_10": {
-   "coef": 0.0038,
-   "se": 0.0348,
-   "p": 0.9137
+   "coef": -0.0064,
+   "se": 0.0392,
+   "p": 0.8711
   },
   "P_set_angle_10": {
-   "coef": -0.0013,
-   "se": 0.0009,
-   "p": 0.1643
+   "coef": -0.0009,
+   "se": 0.0011,
+   "p": 0.4032
   },
   "P_t_d1_d2": {
-   "coef": -0.2055,
-   "se": 0.0895,
-   "p": 0.0217
+   "coef": -0.18,
+   "se": 0.099,
+   "p": 0.0688
   }
  },
  "ol_within_model": {
   "w_depth_10": {
-   "coef": 0.0626,
-   "se": 0.0043,
+   "coef": 0.0587,
+   "se": 0.004,
    "p": 0.0
   },
   "w_set_angle_10": {
-   "coef": -0.0004,
+   "coef": -0.0005,
    "se": 0.0001,
    "p": 0.0
   },
   "w_t_d1_d2": {
-   "coef": -0.2087,
+   "coef": -0.2101,
    "se": 0.0102,
    "p": 0.0
   }
  },
- "ol_model_n": 45477,
+ "ol_model_n": 38621,
+ "dl_play_level_models": {
+  "get_off": {
+   "n": 31803,
+   "P_player_get_off": {
+    "coef": -0.1582,
+    "se": 0.0346,
+    "p": 0.0
+   }
+  },
+  "second_yard": {
+   "n": 31803,
+   "P_t_d1_d2": {
+    "coef": -0.2833,
+    "se": 0.063,
+    "p": 0.0
+   }
+  },
+  "both": {
+   "n": 31803,
+   "P_player_get_off": {
+    "coef": -0.1187,
+    "se": 0.0431,
+    "p": 0.0059
+   },
+   "P_t_d1_d2": {
+    "coef": -0.1819,
+    "se": 0.0757,
+    "p": 0.0162
+   }
+  },
+  "official_10yd": {
+   "n": 24558,
+   "ten_yd_split": {
+    "coef": -0.1394,
+    "se": 0.0615,
+    "p": 0.0234
+   }
+  }
+ },
  "weekly": {
   "per_game_sd": 0.0554,
   "between_player_sd": 0.0528,
