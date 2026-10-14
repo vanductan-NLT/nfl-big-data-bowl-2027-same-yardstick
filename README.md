@@ -3,6 +3,7 @@
 Measuring trench (OL/DL) movement identically at the NFL Scouting Combine and in the first 1.5 s after `ball_snap`, then testing three links separately: does a metric repeat, does it carry from the Combine to NFL snaps, and does the in-game version predict pressure.
 
 - Competition: https://www.kaggle.com/competitions/nfl-big-data-bowl-2027 (Open Track)
+- Submitted writeup: https://www.kaggle.com/competitions/nfl-big-data-bowl-2027/writeups/same-yardstick-measuring-trench-movement-identica
 - Public notebook (reproduces every number and figure): https://www.kaggle.com/code/vanductan/bdb27-same-yardstick-combine-vs-snap
 - Writeup text: `docs/writeup-same-yardstick.md`; figures: `output/figures/`; numbers: `output/results.json`
 
