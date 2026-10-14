@@ -1,0 +1,5 @@
+data/raw/
+data/processed/
+data/kaggle_out/
+kaggle/extract/bdb27_trench_extract.py
+__pycache__/
